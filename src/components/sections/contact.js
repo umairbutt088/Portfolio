@@ -60,8 +60,11 @@ const Contact = () => {
       <h2 className="title">Get In Touch</h2>
 
       <p>
-        Although I’m not currently looking for any new opportunities, my inbox is always open.
-        Whether you have a question or just want to say hi, I’ll try my best to get back to you!
+        I’m seeking a position as a React Native developer with a strong focus on building dynamic
+        and efficient mobile applications. Proficient in JavaScript, TypeScript, HTML, CSS, and
+        Redux Toolkit, I thrive in fast-paced environments where I can tackle challenges, learn new
+        technologies, and deliver impactful solutions. My passion for creating seamless user
+        experiences drives my dedication to this field.
       </p>
 
       <a className="email-link" href={`mailto:${email}`}>

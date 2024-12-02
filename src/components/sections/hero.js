@@ -18,7 +18,7 @@ const StyledHeroSection = styled.section`
   }
 
   h1 {
-    margin: 0 0 30px 4px;
+    margin: 30px 0 30px 4px;
     color: var(--green);
     font-family: var(--font-mono);
     font-size: clamp(var(--fz-sm), 5vw, var(--fz-md));
@@ -37,7 +37,7 @@ const StyledHeroSection = styled.section`
 
   p {
     margin: 20px 0 0;
-    max-width: 540px;
+    max-width: 700px;
   }
 
   .email-link {
@@ -60,28 +60,29 @@ const Hero = () => {
   }, []);
 
   const one = <h1>Hi, my name is</h1>;
-  const two = <h2 className="big-heading">Brittany Chiang.</h2>;
-  const three = <h3 className="big-heading">I build things for the web.</h3>;
+  const two = <h2 className="big-heading">Muhammad Umair Butt.</h2>;
+  const three = <h3 className="big-heading">I build cross-platform mobile applications.</h3>;
   const four = (
     <>
       <p>
-        I’m a software engineer specializing in building (and occasionally designing) exceptional
-        digital experiences. Currently, I’m focused on building accessible, human-centered products
-        at{' '}
-        <a href="https://upstatement.com/" target="_blank" rel="noreferrer">
-          Upstatement
-        </a>
-        .
+        Experienced React Native Developer with 4 years dedicated to building high-performance,
+        cross-platform mobile applications. Proven track record of delivering robust, user-centered
+        solutions that align with business objectives and enhance user experience. Skilled in
+        leading projects from concept through deployment, with expertise in managing technical
+        challenges and optimizing performance across iOS and Android platforms. Currently seeking
+        Senior roles where I can contribute to complex, scalable mobile solutions and lead
+        development efforts with an eye on innovation and quality.
       </p>
     </>
   );
   const five = (
     <a
       className="email-link"
-      href="https://www.newline.co/courses/build-a-spotify-connected-app"
+      href="https://www.linkedin.com/in/muhammad-umair-butt-b18092219/"
       target="_blank"
-      rel="noreferrer">
-      Check out my course!
+      rel="noreferrer"
+    >
+      Check my LinkedIn profile
     </a>
   );
 

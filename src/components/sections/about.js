@@ -125,7 +125,22 @@ const About = () => {
     sr.reveal(revealContainer.current, srConfig());
   }, []);
 
-  const skills = ['JavaScript (ES6+)', 'TypeScript', 'React', 'Eleventy', 'Node.js', 'WordPress'];
+  const skills = [
+    'React Native',
+    'Expo',
+    'JavaScript (ES6+)',
+    'TypeScript',
+    'Functional Copmponents',
+    'Styled Component',
+    'Redux & Redux-Toolkit',
+    'Jest Unit Testing',
+    'Rest APIs',
+    'Firebase FireStore',
+    'Push Notifications',
+    'Axios Interceptor',
+    'Crashlytics',
+    'Google Analytics',
+  ];
 
   return (
     <StyledAboutSection id="about" ref={revealContainer}>
@@ -135,33 +150,40 @@ const About = () => {
         <StyledText>
           <div>
             <p>
-              Hello! My name is Brittany and I enjoy creating things that live on the internet. My
-              interest in web development started back in 2012 when I decided to try editing custom
-              Tumblr themes — turns out hacking together a custom reblog button taught me a lot
-              about HTML &amp; CSS!
+              Hello! I’m Umair – a React Native developer with a passion for transforming ideas into
+              high-impact mobile applications. With over 4 years of experience in mobile
+              development, I’ve honed my skills in crafting cross-platform apps that are as
+              beautiful as they are functional.
             </p>
 
             <p>
-              Fast-forward to today, and I’ve had the privilege of working at{' '}
-              <a href="https://us.mullenlowe.com/">an advertising agency</a>,{' '}
-              <a href="https://starry.com/">a start-up</a>,{' '}
-              <a href="https://www.apple.com/">a huge corporation</a>, and{' '}
-              <a href="https://scout.camd.northeastern.edu/">a student-led design studio</a>. My
-              main focus these days is building accessible, inclusive products and digital
-              experiences at <a href="https://upstatement.com/">Upstatement</a> for a variety of
-              clients.
+              I’ve had the opportunity to work on a diverse range of projects, from large-scale
+              applications that serve thousands of users to specialized tools tailored for specific
+              needs. My journey in app development has been both challenging and rewarding, pushing
+              me to not only master the technical aspects but also to think critically about user
+              experience, scalability, and performance.
             </p>
+
+            {/* <h2>What Sets Me Apart:</h2>
 
             <p>
-              I also recently{' '}
-              <a href="https://www.newline.co/courses/build-a-spotify-connected-app">
-                launched a course
-              </a>{' '}
-              that covers everything you need to build a web app with the Spotify API using Node
-              &amp; React.
+              <h5>Innovative, User-Centered Design: </h5>I believe that great apps are intuitive,
+              responsive, and visually appealing. With expertise in React Native CLI and Expo, along
+              with TypeScript, I build interfaces that are both functional and delightful to use.
             </p>
+            <p>
+              <h5>Technical Depth and Versatility:</h5> Beyond the frontend, I’m well-versed in
+              using Redux (and Redux Toolkit) for state management, ensuring seamless data handling
+              and app performance. I’ve also integrated various backend and cloud solutions,
+              including Firebase and RESTful APIs, to create cohesive, reliable systems.
+            </p> */}
 
-            <p>Here are a few technologies I’ve been working with recently:</p>
+            <p>
+              Each project I take on is a collaboration. I’m committed to understanding my clients’
+              goals and working together to deliver solutions that not only meet requirements but
+              exceed expectations. My approach is proactive and hands-on, ensuring each app is built
+              with precision, scalability, and a keen eye for detail.
+            </p>
           </div>
 
           <ul className="skills-list">
@@ -173,7 +195,7 @@ const About = () => {
           <div className="wrapper">
             <StaticImage
               className="img"
-              src="../../images/me.jpg"
+              src="../../images/userImage.png"
               width={500}
               quality={95}
               formats={['AUTO', 'WEBP', 'AVIF']}
