@@ -134,6 +134,7 @@ const About = () => {
     'Styled Component',
     'Redux & Redux-Toolkit',
     'Jest Unit Testing',
+    'Maestro UI Testing',
     'Rest APIs',
     'Firebase FireStore',
     'Push Notifications',
