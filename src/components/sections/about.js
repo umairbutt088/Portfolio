@@ -199,7 +199,7 @@ const About = () => {
               src="../../images/userImage.png"
               width={500}
               quality={95}
-              formats={['AUTO', 'WEBP', 'AVIF']}
+              formats={['AUTO', 'WEBP', 'PNG']}
               alt="Headshot"
             />
           </div>
