@@ -8,9 +8,15 @@ const StyledContactSection = styled.section`
   max-width: 600px;
   margin: 0 auto 100px;
   text-align: center;
+  position: relative;
+  z-index: 1;
+  /* Keep readable even if a reveal lib stalls on small screens */
+  min-height: 280px;
 
   @media (max-width: 768px) {
-    margin: 0 auto 50px;
+    margin: 40px auto 80px;
+    padding: 40px 0 60px;
+    min-height: 320px;
   }
 
   .overline {
@@ -32,17 +38,37 @@ const StyledContactSection = styled.section`
   }
 
   .title {
-    font-size: clamp(40px, 5vw, 60px);
+    margin: 0 0 20px;
+    font-size: clamp(36px, 8vw, 60px);
+    color: var(--green);
+    background-image: linear-gradient(120deg, var(--green) 0%, var(--blue) 45%, var(--green) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  p {
+    margin: 0 auto;
+    color: var(--slate);
   }
 
   .email-link {
     ${({ theme }) => theme.mixins.bigButton};
     margin-top: 50px;
+    display: inline-block;
+
+    @media (max-width: 480px) {
+      margin-top: 36px;
+    }
   }
 `;
 
 const Contact = () => {
-  const revealContainer = useRef(null);
+  const revealOverline = useRef(null);
+  const revealTitle = useRef(null);
+  const revealText = useRef(null);
+  const revealCta = useRef(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -50,16 +76,24 @@ const Contact = () => {
       return;
     }
 
-    sr.reveal(revealContainer.current, srConfig());
-  }, []);
+    // reset: false — last section must not snap back to opacity 0 at the page bottom on mobile
+    sr.reveal(revealOverline.current, srConfig(80, 0.1, 'bottom', false));
+    sr.reveal(revealTitle.current, srConfig(160, 0.1, 'bottom', false));
+    sr.reveal(revealText.current, srConfig(240, 0.1, 'bottom', false));
+    sr.reveal(revealCta.current, srConfig(320, 0.1, 'bottom', false));
+  }, [prefersReducedMotion]);
 
   return (
-    <StyledContactSection id="contact" ref={revealContainer}>
-      <h2 className="numbered-heading overline">What’s Next?</h2>
+    <StyledContactSection id="contact">
+      <h2 className="numbered-heading overline" ref={revealOverline}>
+        What’s Next?
+      </h2>
 
-      <h2 className="title">Get In Touch</h2>
+      <h2 className="title" ref={revealTitle}>
+        Get In Touch
+      </h2>
 
-      <p>
+      <p ref={revealText}>
         I’m seeking a position as a React Native developer with a strong focus on building dynamic
         and efficient mobile applications. Proficient in JavaScript, TypeScript, HTML, CSS, and
         Redux Toolkit, I thrive in fast-paced environments where I can tackle challenges, learn new
@@ -72,8 +106,9 @@ const Contact = () => {
         href={`https://wa.me/${whatsappNumber}`}
         target="_blank"
         rel="noreferrer noopener"
+        ref={revealCta}
       >
-        Send a WhatsApp Message
+        <span className="btn-text">Send a WhatsApp Message</span>
       </a>
     </StyledContactSection>
   );

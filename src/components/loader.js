@@ -39,9 +39,22 @@ const StyledLoader = styled.div`
 const Loader = ({ finishLoading }) => {
   const [isMounted, setIsMounted] = useState(false);
 
-  const animate = () => {
+  useEffect(() => {
+    let done = false;
+    const finish = () => {
+      if (done) {
+        return;
+      }
+      done = true;
+      finishLoading();
+    };
+
+    const mountTimeout = setTimeout(() => setIsMounted(true), 10);
+    // Hard fallback so a missing SVG target can't leave the site stuck on the loader.
+    const failSafe = setTimeout(finish, 3200);
+
     const loader = anime.timeline({
-      complete: () => finishLoading(),
+      complete: finish,
     });
 
     loader
@@ -73,13 +86,12 @@ const Loader = ({ finishLoading }) => {
         opacity: 0,
         zIndex: -1,
       });
-  };
 
-  useEffect(() => {
-    const timeout = setTimeout(() => setIsMounted(true), 10);
-    animate();
-    return () => clearTimeout(timeout);
-  }, []);
+    return () => {
+      clearTimeout(mountTimeout);
+      clearTimeout(failSafe);
+    };
+  }, [finishLoading]);
 
   return (
     <StyledLoader className="loader" isMounted={isMounted}>

@@ -12,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     width: 100%;
     scroll-behavior: smooth;
+    overflow-anchor: none;
   }
 
   *,
@@ -75,6 +76,10 @@ const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     background-color: var(--navy);
+    background-image:
+      radial-gradient(ellipse 90% 60% at 0% 0%, rgba(100, 255, 218, 0.06), transparent 50%),
+      radial-gradient(ellipse 80% 50% at 100% 0%, rgba(87, 203, 255, 0.05), transparent 45%);
+    background-attachment: fixed;
     color: var(--slate);
     font-family: var(--font-sans);
     font-size: var(--fz-xl);
@@ -187,6 +192,17 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
     font-size: clamp(26px, 5vw, var(--fz-heading));
     white-space: nowrap;
+    color: var(--green);
+    background-image: linear-gradient(
+      120deg,
+      var(--green) 0%,
+      var(--blue) 45%,
+      var(--green) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 
     &:before {
       position: relative;
@@ -195,9 +211,11 @@ const GlobalStyle = createGlobalStyle`
       content: '0' counter(section) '.';
       margin-right: 10px;
       color: var(--green);
+      -webkit-text-fill-color: var(--green);
       font-family: var(--font-mono);
       font-size: clamp(var(--fz-md), 3vw, var(--fz-xl));
       font-weight: 400;
+      background: none;
 
       @media (max-width: 480px) {
         margin-bottom: -3px;
@@ -211,9 +229,12 @@ const GlobalStyle = createGlobalStyle`
       position: relative;
       top: -5px;
       width: 300px;
-      height: 1px;
+      height: 2px;
       margin-left: 20px;
-      background-color: var(--lightest-navy);
+      border-radius: 999px;
+      -webkit-text-fill-color: initial;
+      background: linear-gradient(90deg, var(--green), var(--blue), transparent);
+      background-color: transparent;
 
       @media (max-width: 1080px) {
         width: 200px;
@@ -235,7 +256,8 @@ const GlobalStyle = createGlobalStyle`
     vertical-align: middle;
   }
 
-  img[alt=""],
+  /* Dev hint for missing alts — skip Gatsby spacers / hidden presentation imgs */
+  img[alt=""]:not([aria-hidden='true']):not([role='presentation']),
   img:not([alt]) {
     filter: blur(5px);
   }

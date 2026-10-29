@@ -16,6 +16,8 @@ function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(getInitialState);
   useEffect(() => {
     const mediaQueryList = window.matchMedia(QUERY);
+    // Sync after hydration — SSR defaults to true, which would skip all motion forever.
+    setPrefersReducedMotion(!mediaQueryList.matches);
     const listener = event => {
       setPrefersReducedMotion(!event.matches);
     };

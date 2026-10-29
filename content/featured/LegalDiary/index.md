@@ -2,7 +2,8 @@
 date: '4'
 title: 'Legal Diary'
 cover: './legal-diary.png'
-external: '#'
+ios: 'https://apps.apple.com/app/case-diary-for-lawyers/id6786853969'
+android: 'https://play.google.com/store/apps/details?id=com.umairbutt.legaldiary'
 tech:
   - Expo.io
   - AI Code Generator

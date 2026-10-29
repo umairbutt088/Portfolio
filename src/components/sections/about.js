@@ -1,9 +1,35 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StaticImage } from 'gatsby-plugin-image';
-import styled from 'styled-components';
-import { srConfig } from '@config';
-import sr from '@utils/sr';
+import styled, { keyframes } from 'styled-components';
 import { usePrefersReducedMotion } from '@hooks';
+
+const HEADING_WORDS = [
+  { text: 'About', accent: false },
+  { text: 'Me', accent: true },
+];
+
+const PARAGRAPHS = [
+  `I’m a Senior React Native Engineer and Mobile Team Lead with 8.5+ years of experience building scalable, production-ready mobile applications for iOS and Android. I specialize in React Native, Expo, TypeScript and modern mobile architecture, with hands-on experience across Firebase, Supabase, REST APIs, GraphQL, real-time systems, payments and third-party integrations.`,
+  `My recent work focuses on bringing AI and Large Language Models into mobile products, from intelligent features and AI-powered user experiences to practical LLM integrations. I also leverage AI-assisted development to accelerate code generation, refactoring, debugging, testing and documentation while maintaining strong engineering standards.`,
+  `I approach mobile development with a balance of technical depth and product thinking. I care about architecture, performance, usability and maintainability, and enjoy turning complex ideas into reliable products that can evolve and scale in production. Alongside hands-on development, I lead mobile initiatives, mentor developers and contribute to code quality, testing and CI/CD.`,
+];
+
+const ACCENT_WORDS = new Set([
+  'AI',
+  'AI-powered',
+  'React',
+  'Native',
+  'TypeScript',
+  'LLM',
+  'Large',
+  'Language',
+  'Models',
+]);
+
+const accentShine = keyframes`
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+`;
 
 const StyledAboutSection = styled.section`
   max-width: 900px;
@@ -17,38 +43,121 @@ const StyledAboutSection = styled.section`
       display: block;
     }
   }
-`;
-const StyledText = styled.div`
-  ul.skills-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(140px, 200px));
-    grid-gap: 0 10px;
-    padding: 0;
-    margin: 20px 0 0 0;
-    overflow: hidden;
-    list-style: none;
 
-    li {
-      position: relative;
-      margin-bottom: 10px;
-      padding-left: 20px;
-      font-family: var(--font-mono);
-      font-size: var(--fz-xs);
-
-      &:before {
-        content: '▹';
-        position: absolute;
-        left: 0;
-        color: var(--green);
-        font-size: var(--fz-sm);
-        line-height: 12px;
-      }
+  @media (prefers-reduced-motion: reduce) {
+    .about-word-inner,
+    .about-accent-line,
+    .about-pic {
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+      width: 100% !important;
     }
   }
 `;
+
+const StyledHeading = styled.h2`
+  &.numbered-heading {
+    margin-bottom: 40px;
+  }
+
+  .about-word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    margin-right: 0.28em;
+  }
+
+  .about-word-inner {
+    display: inline-block;
+    transform: translate3d(0, 115%, 0) rotate(4deg);
+    opacity: 0;
+    color: var(--green);
+    background: linear-gradient(120deg, var(--green) 0%, var(--blue) 45%, var(--green) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+  }
+
+  &.is-active .about-word-inner {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 1;
+    animation: ${accentShine} 3.2s ease-in-out infinite alternate;
+    animation-delay: 0.8s;
+  }
+
+  .about-accent-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .about-accent-line {
+    position: absolute;
+    left: 0;
+    bottom: 0.08em;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    opacity: 0.85;
+    transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &.is-active .about-accent-line {
+    width: 100%;
+    transition-delay: 0.55s;
+  }
+`;
+
+const StyledText = styled.div`
+  .about-copy p {
+    margin: 0 0 15px;
+  }
+
+  .about-word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    margin-right: 0.22em;
+  }
+
+  .about-word-inner {
+    display: inline-block;
+    transform: translate3d(0, 110%, 0) rotate(2deg);
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+  }
+
+  &.is-active .about-word-inner {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 1;
+  }
+
+  .about-accent {
+    color: var(--green);
+  }
+`;
+
 const StyledPic = styled.div`
   position: relative;
   max-width: 300px;
+  transform: translate3d(40px, 0, 0);
+  opacity: 0;
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 0s;
+
+  &.is-active {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    transition-delay: 0.35s;
+  }
 
   @media (max-width: 768px) {
     margin: 50px auto 0;
@@ -113,104 +222,125 @@ const StyledPic = styled.div`
   }
 `;
 
+const splitWords = text => text.trim().split(/\s+/).filter(Boolean);
+
+const AnimatedWords = ({ text, startIndex = 0, prefersReducedMotion, accentWords }) => {
+  const words = splitWords(text);
+
+  return words.map((word, i) => {
+    const clean = word.replace(/[.,;:!?]/g, '');
+    const isAccent = accentWords?.has(clean);
+    const delay = (startIndex + i) * 18;
+
+    return (
+      <span className="about-word" key={`${word}-${startIndex + i}`} aria-hidden="true">
+        <span
+          className={`about-word-inner${isAccent ? ' about-accent' : ''}`}
+          style={{ transitionDelay: prefersReducedMotion ? '0ms' : `${delay}ms` }}
+        >
+          {word}
+        </span>
+      </span>
+    );
+  });
+};
+
 const About = () => {
-  const revealContainer = useRef(null);
+  const sectionRef = useRef(null);
+  const [isActive, setIsActive] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (prefersReducedMotion) {
+      setIsActive(true);
       return;
     }
 
-    sr.reveal(revealContainer.current, srConfig());
-  }, []);
+    const node = sectionRef.current;
+    if (!node) {
+      return;
+    }
 
-  const skills = [
-    'React Native',
-    'Expo',
-    'JavaScript (ES6+)',
-    'TypeScript',
-    'Functional Copmponents',
-    'Styled Component',
-    'Redux & Redux-Toolkit',
-    'Jest Unit Testing',
-    'Maestro UI Testing',
-    'Rest APIs',
-    'Supabase',
-    'Firebase FireStore',
-    'AI Powered Development',
-    'Push Notifications',
-    'Axios Interceptor',
-    'Crashlytics',
-    'Google Analytics',
-    'PostgreSQL',
-    'Payment Gateways',
-    'Stripe',
-    'PayPal',
-    'Apple Pay',
-    'Google Pay',
-    'Microsoft Pay',
-    'Amazon Pay',
-  ];
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsActive(entry.isIntersecting);
+      },
+      { threshold: 0.25 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [prefersReducedMotion]);
+
+  const headingLabel = HEADING_WORDS.map(word => word.text).join(' ');
+  let wordCursor = 0;
 
   return (
-    <StyledAboutSection id="about" ref={revealContainer}>
-      <h2 className="numbered-heading">About Me</h2>
+    <StyledAboutSection id="about" ref={sectionRef}>
+      <StyledHeading
+        className={`numbered-heading${isActive ? ' is-active' : ''}`}
+        aria-label={headingLabel}
+      >
+        {HEADING_WORDS.map((word, i) => {
+          const delay = i * 70;
+          const inner = (
+            <span
+              className={`about-word-inner${word.accent ? ' about-accent' : ''}`}
+              style={{ transitionDelay: prefersReducedMotion ? '0ms' : `${delay}ms` }}
+              aria-hidden="true"
+            >
+              {word.text}
+            </span>
+          );
+
+          return (
+            <span className="about-word" key={`${word.text}-${i}`} aria-hidden="true">
+              {word.accent ? (
+                <span className="about-accent-wrap">
+                  {inner}
+                  <span className="about-accent-line" />
+                </span>
+              ) : (
+                inner
+              )}
+            </span>
+          );
+        })}
+      </StyledHeading>
 
       <div className="inner">
-        <StyledText>
-          <div>
-            <p>
-              Hello! I’m Umair – an expert AI Powered React Native and Expo Developer with a passion
-              for transforming ideas into high-impact mobile applications. With over 4 years of
-              experience in mobile development, I’ve honed my skills in crafting cross-platform apps
-              that are as beautiful as they are functional.
-            </p>
+        <StyledText className={isActive ? 'is-active' : undefined}>
+          <div className="about-copy">
+            {PARAGRAPHS.map((paragraph, paragraphIndex) => {
+              const startIndex = wordCursor + 6;
+              const wordCount = splitWords(paragraph).length;
+              wordCursor += wordCount;
 
-            <p>
-              I’ve had the opportunity to work on a diverse range of projects, from large-scale
-              applications that serve thousands of users to specialized tools tailored for specific
-              needs. My journey in app development has been both challenging and rewarding, pushing
-              me to not only master the technical aspects but also to think critically about user
-              experience, scalability, and performance.
-            </p>
-
-            {/* <h2>What Sets Me Apart:</h2>
-
-            <p>
-              <h5>Innovative, User-Centered Design: </h5>I believe that great apps are intuitive,
-              responsive, and visually appealing. With expertise in React Native CLI and Expo, along
-              with TypeScript, I build interfaces that are both functional and delightful to use.
-            </p>
-            <p>
-              <h5>Technical Depth and Versatility:</h5> Beyond the frontend, I’m well-versed in
-              using Redux (and Redux Toolkit) for state management, ensuring seamless data handling
-              and app performance. I’ve also integrated various backend and cloud solutions,
-              including Firebase and RESTful APIs, to create cohesive, reliable systems.
-            </p> */}
-
-            <p>
-              Each project I take on is a collaboration. I’m committed to understanding my clients’
-              goals and working together to deliver solutions that not only meet requirements but
-              exceed expectations. My approach is proactive and hands-on, ensuring each app is built
-              with precision, scalability, and a keen eye for detail.
-            </p>
+              return (
+                <p key={paragraphIndex} aria-label={paragraph}>
+                  <AnimatedWords
+                    text={paragraph}
+                    startIndex={startIndex}
+                    prefersReducedMotion={prefersReducedMotion}
+                    accentWords={ACCENT_WORDS}
+                  />
+                </p>
+              );
+            })}
           </div>
-
-          <ul className="skills-list">
-            {skills && skills.map((skill, i) => <li key={i}>{skill}</li>)}
-          </ul>
         </StyledText>
 
-        <StyledPic>
+        <StyledPic className={`about-pic${isActive ? ' is-active' : ''}`}>
           <div className="wrapper">
             <StaticImage
               className="img"
-              src="../../images/userImage.png"
+              src="../../images/umair-avatar.jpg"
               width={500}
               quality={95}
-              formats={['AUTO', 'WEBP', 'PNG']}
-              alt="Headshot"
+              formats={['AUTO', 'WEBP', 'AVIF']}
+              alt="Muhammad Umair Butt"
+              objectFit="cover"
+              objectPosition="50% 20%"
             />
           </div>
         </StyledPic>

@@ -88,8 +88,7 @@ const mixins = {
 
   smallButton: css`
     color: var(--green);
-    background-color: transparent;
-    border: 1px solid var(--green);
+    border: 1px solid transparent;
     border-radius: var(--border-radius);
     padding: 0.75rem 1rem;
     font-size: var(--fz-xs);
@@ -97,11 +96,23 @@ const mixins = {
     line-height: 1;
     text-decoration: none;
     transition: var(--transition);
+    background: linear-gradient(var(--navy), var(--navy)) padding-box,
+      linear-gradient(120deg, var(--green) 0%, var(--blue) 50%, var(--green) 100%) border-box;
+    box-shadow: 0 0 0 0 transparent;
+
+    .btn-text {
+      color: var(--green);
+      background: linear-gradient(120deg, var(--green) 0%, var(--blue) 50%, var(--green) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
     &:hover,
     &:focus-visible {
       outline: none;
-      box-shadow: 3px 3px 0 0 var(--green);
+      box-shadow: 3px 3px 0 0 var(--blue);
       transform: translate(-4px, -4px);
     }
     &:after {
@@ -111,8 +122,7 @@ const mixins = {
 
   bigButton: css`
     color: var(--green);
-    background-color: transparent;
-    border: 1px solid var(--green);
+    border: 1px solid transparent;
     border-radius: var(--border-radius);
     padding: 1.25rem 1.75rem;
     font-size: var(--fz-sm);
@@ -120,11 +130,23 @@ const mixins = {
     line-height: 1;
     text-decoration: none;
     transition: var(--transition);
+    background: linear-gradient(var(--navy), var(--navy)) padding-box,
+      linear-gradient(120deg, var(--green) 0%, var(--blue) 50%, var(--green) 100%) border-box;
+    box-shadow: 0 0 0 0 transparent;
+
+    .btn-text {
+      color: var(--green);
+      background: linear-gradient(120deg, var(--green) 0%, var(--blue) 50%, var(--green) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
     &:hover,
     &:focus-visible {
       outline: none;
-      box-shadow: 4px 4px 0 0 var(--green);
+      box-shadow: 4px 4px 0 0 var(--blue);
       transform: translate(-5px, -5px);
     }
     &:after {

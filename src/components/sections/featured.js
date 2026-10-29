@@ -1,11 +1,147 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import { GatsbyImage, getImage } from 'gatsby-plugin-image';
-import styled from 'styled-components';
-import sr from '@utils/sr';
-import { srConfig } from '@config';
+import PropTypes from 'prop-types';
+import styled, { keyframes } from 'styled-components';
 import { Icon } from '@components/icons';
 import { usePrefersReducedMotion } from '@hooks';
+
+const HEADING_WORDS = [
+  { text: 'Some', accent: false },
+  { text: 'Things', accent: false },
+  { text: 'I\'ve', accent: false },
+  { text: 'Built', accent: true },
+];
+
+const accentShine = keyframes`
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+`;
+
+const stripHtml = html =>
+  String(html || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const splitWords = text => text.trim().split(/\s+/).filter(Boolean);
+
+const KineticWords = ({ text, startIndex = 0, prefersReducedMotion, accentWords, className }) => {
+  const words = splitWords(text);
+
+  return words.map((word, i) => {
+    const clean = word.replace(/[.,;:!?()'"]/g, '');
+    const isAccent = accentWords?.has(clean);
+    const delay = (startIndex + i) * 40;
+
+    return (
+      <span
+        className={`kinetic-word ${className || ''}`.trim()}
+        key={`${word}-${startIndex + i}`}
+        aria-hidden="true"
+      >
+        <span
+          className={`kinetic-word-inner${isAccent ? ' kinetic-accent' : ''}`}
+          style={{ transitionDelay: prefersReducedMotion ? '0ms' : `${delay}ms` }}
+        >
+          {word}
+        </span>
+      </span>
+    );
+  });
+};
+
+KineticWords.propTypes = {
+  text: PropTypes.string.isRequired,
+  startIndex: PropTypes.number,
+  prefersReducedMotion: PropTypes.bool,
+  accentWords: PropTypes.instanceOf(Set),
+  className: PropTypes.string,
+};
+
+const StyledFeaturedSection = styled.section`
+  @media (prefers-reduced-motion: reduce) {
+    .kinetic-word-inner,
+    .kinetic-accent-line,
+    .project-tech-list li,
+    .project-links,
+    .project-image {
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+      width: auto !important;
+    }
+
+    .kinetic-accent-line {
+      width: 100% !important;
+    }
+  }
+
+  .kinetic-word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    margin-right: 0.28em;
+  }
+
+  .kinetic-word-inner {
+    display: inline-block;
+    transform: translate3d(0, 115%, 0) rotate(3deg);
+    opacity: 0;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+  }
+
+  .is-active .kinetic-word-inner {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 1;
+  }
+
+  .kinetic-accent-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .kinetic-accent-line {
+    position: absolute;
+    left: 0;
+    bottom: 0.08em;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    opacity: 0.85;
+    transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .is-active .kinetic-accent-line {
+    width: 100%;
+    transition-delay: 0.55s;
+  }
+`;
+
+const StyledHeading = styled.h2`
+  &.numbered-heading {
+    margin-bottom: 40px;
+  }
+
+  .kinetic-word-inner {
+    color: var(--green);
+    background: linear-gradient(120deg, var(--green) 0%, var(--blue) 45%, var(--green) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  &.is-active .kinetic-word-inner {
+    animation: ${accentShine} 3.2s ease-in-out infinite alternate;
+    animation-delay: 0.9s;
+  }
+`;
 
 const StyledProjectsGrid = styled.ul`
   ${({ theme }) => theme.mixins.resetList};
@@ -62,14 +198,6 @@ const StyledProject = styled.li`
       @media (max-width: 768px) {
         justify-content: flex-start;
       }
-
-      li {
-        margin: 0 0 5px 20px;
-
-        @media (max-width: 768px) {
-          margin: 0 10px 5px 0;
-        }
-      }
     }
     .project-links {
       justify-content: flex-end;
@@ -124,7 +252,7 @@ const StyledProject = styled.li`
   }
 
   .project-title {
-    color: var(--lightest-slate);
+    color: var(--green);
     font-size: clamp(24px, 5vw, 28px);
 
     @media (min-width: 768px) {
@@ -132,8 +260,6 @@ const StyledProject = styled.li`
     }
 
     @media (max-width: 768px) {
-      color: var(--white);
-
       a {
         position: static;
 
@@ -149,6 +275,24 @@ const StyledProject = styled.li`
         }
       }
     }
+
+    a {
+      color: inherit;
+    }
+
+    .kinetic-word-inner {
+      color: var(--green);
+      background: linear-gradient(120deg, var(--green) 0%, var(--blue) 45%, var(--green) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  &.is-active .project-title .kinetic-word-inner {
+    animation: ${accentShine} 3.2s ease-in-out infinite alternate;
+    animation-delay: 0.6s;
   }
 
   .project-description {
@@ -171,14 +315,20 @@ const StyledProject = styled.li`
       }
     }
 
-    a {
-      ${({ theme }) => theme.mixins.inlineLink};
+    .kinetic-word {
+      margin-right: 0.22em;
     }
 
-    strong {
+    .kinetic-accent {
+      -webkit-text-fill-color: initial;
+      background: none;
       color: var(--white);
-      font-weight: normal;
     }
+  }
+
+  &.is-active .project-description .kinetic-word-inner {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 1;
   }
 
   .project-tech-list {
@@ -189,23 +339,48 @@ const StyledProject = styled.li`
     margin: 25px 0 10px;
     padding: 0;
     list-style: none;
+    gap: 8px;
 
     li {
-      margin: 0 20px 5px 0;
-      color: var(--light-slate);
+      margin: 0;
+      padding: 6px 10px;
+      border: 1px solid transparent;
+      border-radius: var(--border-radius);
       font-family: var(--font-mono);
       font-size: var(--fz-xs);
       white-space: nowrap;
+      line-height: 1.2;
+      color: var(--green);
+      background: linear-gradient(var(--light-navy), var(--light-navy)) padding-box,
+        linear-gradient(120deg, var(--green) 0%, var(--blue) 50%, var(--green) 100%) border-box;
+      box-shadow: 0 0 0 0 transparent;
+      transform: translate3d(0, 14px, 0);
+      opacity: 0;
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+
+      span {
+        background: linear-gradient(120deg, var(--green) 0%, var(--blue) 50%, var(--green) 100%);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
     }
 
     @media (max-width: 768px) {
       margin: 10px 0;
 
       li {
-        margin: 0 10px 5px 0;
-        color: var(--lightest-slate);
+        background: linear-gradient(rgba(10, 25, 47, 0.72), rgba(10, 25, 47, 0.72)) padding-box,
+          linear-gradient(120deg, var(--green) 0%, var(--blue) 50%, var(--green) 100%) border-box;
       }
     }
+  }
+
+  &.is-active .project-tech-list li {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
   }
 
   .project-links {
@@ -215,6 +390,10 @@ const StyledProject = styled.li`
     margin-top: 10px;
     margin-left: -10px;
     color: var(--lightest-slate);
+    transform: translate3d(0, 16px, 0);
+    opacity: 0;
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 
     a {
       ${({ theme }) => theme.mixins.flexCenter};
@@ -240,12 +419,21 @@ const StyledProject = styled.li`
     }
   }
 
+  &.is-active .project-links {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
   .project-image {
     ${({ theme }) => theme.mixins.boxShadow};
     grid-column: 6 / -1;
     grid-row: 1 / -1;
     position: relative;
     z-index: 1;
+    transform: translate3d(36px, 0, 0);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 
     @media (min-width: 769px) {
       align-self: start;
@@ -273,7 +461,7 @@ const StyledProject = styled.li`
     @media (max-width: 768px) {
       grid-column: 1 / -1;
       height: 100%;
-      opacity: 0.25;
+      transform: none;
     }
 
     a {
@@ -327,7 +515,166 @@ const StyledProject = styled.li`
       }
     }
   }
+
+  &.is-active .project-image {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    transition-delay: 0.25s;
+
+    @media (max-width: 768px) {
+      opacity: 0.25;
+      transform: none;
+      transition-delay: 0s;
+    }
+  }
+
+  &:nth-of-type(odd) .project-image {
+    transform: translate3d(-36px, 0, 0);
+  }
+
+  &:nth-of-type(odd).is-active .project-image {
+    transform: translate3d(0, 0, 0);
+
+    @media (max-width: 768px) {
+      transform: none;
+    }
+  }
 `;
+
+const FeaturedProject = ({ project, prefersReducedMotion }) => {
+  const ref = useRef(null);
+  const [isActive, setIsActive] = useState(false);
+  const { frontmatter, html } = project;
+  const { external, title, tech, github, cover, cta, ios, android } = frontmatter;
+  const image = getImage(cover);
+  const projectUrl = external || ios || android || github || '#';
+  const description = stripHtml(html);
+  const overline = 'Featured Project';
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setIsActive(true);
+      return;
+    }
+
+    const node = ref.current;
+    if (!node) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsActive(entry.isIntersecting);
+      },
+      { threshold: 0.28 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [prefersReducedMotion]);
+
+  const titleWords = splitWords(title);
+  const descWordStart = splitWords(overline).length + titleWords.length + 2;
+
+  return (
+    <StyledProject ref={ref} className={isActive ? 'is-active' : undefined}>
+      <div className="project-content">
+        <div>
+          <p className="project-overline" aria-label={overline}>
+            <KineticWords text={overline} prefersReducedMotion={prefersReducedMotion} />
+          </p>
+
+          <h3 className="project-title">
+            <a href={projectUrl} aria-label={title}>
+              <KineticWords
+                text={title}
+                startIndex={3}
+                prefersReducedMotion={prefersReducedMotion}
+              />
+            </a>
+          </h3>
+
+          <div className="project-description" aria-label={description}>
+            <KineticWords
+              text={description}
+              startIndex={descWordStart}
+              prefersReducedMotion={prefersReducedMotion}
+              accentWords={new Set(['push', 'notifications', 'precedents', 'citations', 'AI'])}
+            />
+          </div>
+
+          {tech.length > 0 && (
+            <ul className="project-tech-list">
+              {tech.map((item, i) => (
+                <li
+                  key={i}
+                  style={{
+                    transitionDelay: prefersReducedMotion
+                      ? '0ms'
+                      : `${Math.max(420, descWordStart * 40 + 120) + i * 40}ms`,
+                  }}
+                >
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div
+            className="project-links"
+            style={{
+              transitionDelay: prefersReducedMotion
+                ? '0ms'
+                : `${Math.max(520, descWordStart * 40 + 220)}ms`,
+            }}
+          >
+            {cta && (
+              <a href={cta} aria-label="Course Link" className="cta">
+                Learn More
+              </a>
+            )}
+            {github && (
+              <a href={github} aria-label="GitHub Link">
+                <Icon name="GitHub" />
+              </a>
+            )}
+            {ios && (
+              <a href={ios} aria-label="Apple App Store Link" target="_blank" rel="noreferrer">
+                <Icon name="AppStore" />
+              </a>
+            )}
+            {android && (
+              <a
+                href={android}
+                aria-label="Google Play Store Link"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Icon name="PlayStore" />
+              </a>
+            )}
+            {external && !cta && (
+              <a href={external} aria-label="External Link" className="external">
+                <Icon name="External" />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="project-image">
+        <a href={projectUrl}>
+          <GatsbyImage image={image} alt={title} className="img" />
+        </a>
+      </div>
+    </StyledProject>
+  );
+};
+
+FeaturedProject.propTypes = {
+  project: PropTypes.object.isRequired,
+  prefersReducedMotion: PropTypes.bool.isRequired,
+};
 
 const Featured = () => {
   const data = useStaticQuery(graphql`
@@ -348,6 +695,8 @@ const Featured = () => {
               tech
               github
               external
+              ios
+              android
               cta
             }
             html
@@ -358,85 +707,74 @@ const Featured = () => {
   `);
 
   const featuredProjects = data.featured.edges.filter(({ node }) => node);
-  const revealTitle = useRef(null);
-  const revealProjects = useRef([]);
+  const headingRef = useRef(null);
+  const [headingActive, setHeadingActive] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const headingLabel = HEADING_WORDS.map(word => word.text).join(' ');
 
   useEffect(() => {
     if (prefersReducedMotion) {
+      setHeadingActive(true);
       return;
     }
 
-    sr.reveal(revealTitle.current, srConfig());
-    revealProjects.current.forEach((ref, i) => sr.reveal(ref, srConfig(i * 100)));
-  }, []);
+    const node = headingRef.current;
+    if (!node) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHeadingActive(entry.isIntersecting);
+      },
+      { threshold: 0.6 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [prefersReducedMotion]);
 
   return (
-    <section id="projects">
-      <h2 className="numbered-heading" ref={revealTitle}>
-        Some Things I've Built
-      </h2>
+    <StyledFeaturedSection id="projects">
+      <StyledHeading
+        className={`numbered-heading${headingActive ? ' is-active' : ''}`}
+        ref={headingRef}
+        aria-label={headingLabel}
+      >
+        {HEADING_WORDS.map((word, i) => {
+          const delay = i * 70;
+          const inner = (
+            <span
+              className={`kinetic-word-inner${word.accent ? ' kinetic-accent' : ''}`}
+              style={{ transitionDelay: prefersReducedMotion ? '0ms' : `${delay}ms` }}
+              aria-hidden="true"
+            >
+              {word.text}
+            </span>
+          );
+
+          return (
+            <span className="kinetic-word" key={`${word.text}-${i}`} aria-hidden="true">
+              {word.accent ? (
+                <span className="kinetic-accent-wrap">
+                  {inner}
+                  <span className="kinetic-accent-line" />
+                </span>
+              ) : (
+                inner
+              )}
+            </span>
+          );
+        })}
+      </StyledHeading>
 
       <StyledProjectsGrid>
         {featuredProjects &&
-          featuredProjects.map(({ node }, i) => {
-            const { frontmatter, html } = node;
-            const { external, title, tech, github, cover, cta } = frontmatter;
-            const image = getImage(cover);
-
-            return (
-              <StyledProject key={i} ref={el => (revealProjects.current[i] = el)}>
-                <div className="project-content">
-                  <div>
-                    <p className="project-overline">Featured Project</p>
-
-                    <h3 className="project-title">
-                      <a href={external}>{title}</a>
-                    </h3>
-
-                    <div
-                      className="project-description"
-                      dangerouslySetInnerHTML={{ __html: html }}
-                    />
-
-                    {tech.length && (
-                      <ul className="project-tech-list">
-                        {tech.map((tech, i) => (
-                          <li key={i}>{tech}</li>
-                        ))}
-                      </ul>
-                    )}
-
-                    <div className="project-links">
-                      {cta && (
-                        <a href={cta} aria-label="Course Link" className="cta">
-                          Learn More
-                        </a>
-                      )}
-                      {github && (
-                        <a href={github} aria-label="GitHub Link">
-                          <Icon name="GitHub" />
-                        </a>
-                      )}
-                      {external && !cta && (
-                        <a href={external} aria-label="External Link" className="external">
-                          <Icon name="External" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="project-image">
-                  <a href={external ? external : github ? github : '#'}>
-                    <GatsbyImage image={image} alt={title} className="img" />
-                  </a>
-                </div>
-              </StyledProject>
-            );
-          })}
+          featuredProjects.map(({ node }, i) => (
+            <FeaturedProject key={i} project={node} prefersReducedMotion={prefersReducedMotion} />
+          ))}
       </StyledProjectsGrid>
-    </section>
+    </StyledFeaturedSection>
   );
 };
 

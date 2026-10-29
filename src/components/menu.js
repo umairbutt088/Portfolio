@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'gatsby';
 import styled from 'styled-components';
 import { navLinks } from '@config';
-import { KEY_CODES } from '@utils';
+import { KEY_CODES, scrollToHash } from '@utils';
 import { useOnClickOutside } from '@hooks';
 
 const StyledMenu = styled.div`
@@ -246,7 +245,8 @@ const Menu = () => {
           onClick={toggleMenu}
           menuOpen={menuOpen}
           ref={buttonRef}
-          aria-label="Menu">
+          aria-label="Menu"
+        >
           <div className="ham-box">
             <div className="ham-box-inner" />
           </div>
@@ -258,16 +258,22 @@ const Menu = () => {
               <ol>
                 {navLinks.map(({ url, name }, i) => (
                   <li key={i}>
-                    <Link to={url} onClick={() => setMenuOpen(false)}>
+                    <a
+                      href={url}
+                      onClick={e => {
+                        scrollToHash(e, url);
+                        setMenuOpen(false);
+                      }}
+                    >
                       {name}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ol>
             )}
 
-            <a href="/resume.pdf" className="resume-link">
-              Resume
+            <a href="/resume_cv.pdf" className="resume-link">
+              <span className="btn-text">Resume</span>
             </a>
           </nav>
         </StyledSidebar>
