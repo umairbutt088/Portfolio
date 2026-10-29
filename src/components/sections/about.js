@@ -9,7 +9,7 @@ const HEADING_WORDS = [
 ];
 
 const PARAGRAPHS = [
-  `I’m a Senior React Native Engineer and Mobile Team Lead with 8.5+ years of experience building scalable, production-ready mobile applications for iOS and Android. I specialize in React Native, Expo, TypeScript and modern mobile architecture, with hands-on experience across Firebase, Supabase, REST APIs, GraphQL, real-time systems, payments and third-party integrations.`,
+  `I’m a Senior React Native Engineer and Mobile Team Lead with 4+ years of experience building scalable, production-ready mobile applications for iOS and Android. I specialize in React Native, Expo, TypeScript and modern mobile architecture, with hands-on experience across Firebase, Supabase, REST APIs, GraphQL, real-time systems, payments and third-party integrations.`,
   `My recent work focuses on bringing AI and Large Language Models into mobile products, from intelligent features and AI-powered user experiences to practical LLM integrations. I also leverage AI-assisted development to accelerate code generation, refactoring, debugging, testing and documentation while maintaining strong engineering standards.`,
   `I approach mobile development with a balance of technical depth and product thinking. I care about architecture, performance, usability and maintainability, and enjoy turning complex ideas into reliable products that can evolve and scale in production. Alongside hands-on development, I lead mobile initiatives, mentor developers and contribute to code quality, testing and CI/CD.`,
 ];
