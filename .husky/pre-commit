@@ -1,4 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm run lint-staged
+# Call lint-staged directly — `npm run` can hang after prettier finishes
+# when npm has odd env/cli config injected by the IDE.
+./node_modules/.bin/lint-staged

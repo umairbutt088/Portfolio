@@ -4,6 +4,11 @@ module.exports = {
   // WhatsApp: digits only, with country code (no + or spaces). Example Pakistan: 923001234567
   whatsappNumber: '923064343088',
 
+  // Hosted on Google Drive/Docs — edit the Doc anytime; no redeploy needed.
+  // PDF export so visitors download a clean CV.
+  resumeUrl:
+    'https://docs.google.com/document/d/1AYJAL_ykLDqvFiGBUZ64oidw1VHU3H5j/export?format=pdf',
+
   socialMedia: [
     {
       name: 'GitHub',

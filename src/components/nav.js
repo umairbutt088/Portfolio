@@ -5,7 +5,7 @@ import { StaticImage } from 'gatsby-plugin-image';
 import PropTypes from 'prop-types';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import styled, { css, keyframes } from 'styled-components';
-import { navLinks } from '@config';
+import { navLinks, resumeUrl } from '@config';
 import { loaderDelay, scrollToHash } from '@utils';
 import { useScrollDirection, usePrefersReducedMotion } from '@hooks';
 import { Menu } from '@components';
@@ -375,7 +375,7 @@ const Nav = ({ isHome }) => {
   );
 
   const ResumeLink = (
-    <a className="resume-button" href="/resume_cv.pdf" target="_blank" rel="noopener noreferrer">
+    <a className="resume-button" href={resumeUrl} target="_blank" rel="noopener noreferrer">
       <span className="btn-text">Resume</span>
     </a>
   );

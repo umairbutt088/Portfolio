@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
-import { navLinks } from '@config';
+import { navLinks, resumeUrl } from '@config';
 import { KEY_CODES, scrollToHash } from '@utils';
 import { useOnClickOutside } from '@hooks';
 
@@ -272,7 +272,7 @@ const Menu = () => {
               </ol>
             )}
 
-            <a href="/resume_cv.pdf" className="resume-link">
+            <a href={resumeUrl} className="resume-link" target="_blank" rel="noopener noreferrer">
               <span className="btn-text">Resume</span>
             </a>
           </nav>
